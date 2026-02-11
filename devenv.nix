@@ -3,9 +3,19 @@
 {
   packages = [
     pkgs.dioxus-cli
+
+    # Linux desktop dependencies for Dioxus
     pkgs.webkitgtk_4_1
     pkgs.xdotool
     pkgs.openssl
+
+    # GTK development libraries - required for building GTK applications
+    # pkgs.pkg-config
+    # pkgs.gtk3-x11
+    # pkgs.cairo
+    # pkgs.pango
+    # pkgs.atk
+    # pkgs.gdk-pixbuf
   ];
 
   languages.rust.enable = true;
