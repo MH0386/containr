@@ -1,10 +1,4 @@
-{
-  pkgs,
-  lib,
-  config,
-  inputs,
-  ...
-}:
+{ pkgs, lib, ... }:
 
 {
   packages = [ pkgs.dioxus-cli ];
@@ -13,7 +7,7 @@
 
   enterShell = ''
     ${lib.getExe pkgs.git} --version
-    ${lib.getExe pkgs.rustc} --version
+    ${lib.getExe pkgs.dioxus-cli} --version
     ${lib.getExe pkgs.cargo} --version
   '';
 
