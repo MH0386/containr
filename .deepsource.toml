@@ -1,0 +1,16 @@
+version = 1
+
+[[analyzers]]
+name = "secrets"
+
+[[analyzers]]
+name = "rust"
+
+  [analyzers.meta]
+  msrv = "stable"
+
+[[analyzers]]
+name = "docker"
+
+[[code_formatters]]
+name = "rustfmt"
