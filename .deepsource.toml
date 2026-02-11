@@ -6,8 +6,8 @@ name = "secrets"
 [[analyzers]]
 name = "rust"
 
-  [analyzers.meta]
-  msrv = "stable"
+[analyzers.meta]
+msrv = "stable"
 
 [[analyzers]]
 name = "docker"
