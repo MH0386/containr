@@ -43,6 +43,10 @@
       description = "Run cargo tests";
       exec = "${lib.getExe pkgs.cargo} test";
     };
+    "cargo:deps-test" = {
+      description = "Run cargo tests with dependencies";
+      exec = "${lib.getExe pkgs.cargo} test --all-features";
+    };
   };
 
   languages.rust.enable = true;
