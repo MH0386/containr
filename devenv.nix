@@ -18,6 +18,33 @@
     # pkgs.gdk-pixbuf
   ];
 
+  tasks = {
+    "dx:build" = {
+      description = "Build the project";
+      exec = "${lib.getExe pkgs.dioxus-cli} build";
+    };
+    "dx:test" = {
+      description = "Run tests";
+      exec = "${lib.getExe pkgs.dioxus-cli} check";
+    };
+    "dx:run" = {
+      description = "Run the application";
+      exec = "${lib.getExe pkgs.dioxus-cli} run";
+    };
+    "dx:serve" = {
+      description = "Serve the application";
+      exec = "${lib.getExe pkgs.dioxus-cli} serve";
+    };
+    "dx:format" = {
+      description = "Format the project";
+      exec = "${lib.getExe pkgs.dioxus-cli} fmt";
+    };
+    "cargo:test" = {
+      description = "Run cargo tests";
+      exec = "${lib.getExe pkgs.cargo} test";
+    };
+  };
+
   languages.rust.enable = true;
 
   enterShell = ''
