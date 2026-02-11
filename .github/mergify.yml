@@ -1,0 +1,14 @@
+extends: MH0386
+pull_request_rules:
+  - name: Automatically queue valid Cargo Dependency Updates
+    conditions:
+      - files ~= ^(Cargo.lock|Cargo.toml)$
+      - author = renovate[bot]
+      - and:
+          - check-success = Test
+          - check-success = Check Dependency Compatibility
+          - "check-success = DeepSource: Rust"
+          - "check-success = DeepSource: Docker"
+          - "check-success = DeepSource: Secrets"
+    actions:
+      queue:
