@@ -33,7 +33,7 @@ jobs:
       - name: Install devenv.sh
         run: nix profile install nixpkgs#devenv
       - name: Check Compatibility
-        run: devenv tasks run cargo:deps-test
+        run: devenv tasks run cargo:deps-test -v
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
       - name: Install devenv.sh
         run: nix profile install nixpkgs#devenv
       - name: Test
-        run: devenv test
+        run: devenv test -v
       - name: Commit pre-commit fixes
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         if: success() || failure()
