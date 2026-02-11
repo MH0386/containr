@@ -1,12 +1,58 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   packages = [
     pkgs.dioxus-cli
+
+    # Linux desktop dependencies for Dioxus
     pkgs.webkitgtk_4_1
     pkgs.xdotool
     pkgs.openssl
+
+    # GTK development libraries - required for building GTK applications
+    # pkgs.pkg-config
+    # pkgs.gtk3-x11
+    # pkgs.cairo
+    # pkgs.pango
+    # pkgs.atk
+    # pkgs.gdk-pixbuf
   ];
+
+  tasks = {
+    "dx:build" = {
+      description = "Build the project";
+      exec = "${lib.getExe pkgs.dioxus-cli} build";
+    };
+    "dx:test" = {
+      description = "Run tests";
+      exec = "${lib.getExe pkgs.dioxus-cli} check";
+    };
+    "dx:run" = {
+      description = "Run the application";
+      exec = "${lib.getExe pkgs.dioxus-cli} run";
+    };
+    "dx:serve" = {
+      description = "Serve the application";
+      exec = "${lib.getExe pkgs.dioxus-cli} serve";
+    };
+    "dx:format" = {
+      description = "Format the project";
+      exec = "${lib.getExe pkgs.dioxus-cli} fmt";
+    };
+    "cargo:test" = {
+      description = "Run cargo tests";
+      exec = "${lib.getExe pkgs.cargo} test";
+    };
+    "cargo:deps-test" = {
+      description = "Run cargo tests with dependencies";
+      exec = "${lib.getExe pkgs.cargo} test --all-features";
+    };
+  };
 
   languages.rust.enable = true;
 
@@ -14,6 +60,17 @@
     ${lib.getExe pkgs.git} --version
     ${lib.getExe pkgs.dioxus-cli} --version
     ${lib.getExe pkgs.cargo} --version
+  '';
+
+  enterTest = ''
+    echo "Dioxus Format"
+    ${config.tasks."dx:format".exec}
+    echo "Dioxus Test"
+    ${config.tasks."dx:test".exec}
+    echo "Cargo Test"
+    ${config.tasks."cargo:test".exec}
+    echo "Cargo Dependencies Test"
+    ${config.tasks."cargo:deps-test".exec}
   '';
 
   git-hooks.hooks = {
