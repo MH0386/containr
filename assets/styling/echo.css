@@ -8,12 +8,11 @@
   border-radius: 10px;
 }
 
-#echo>h4 {
+#echo > h4 {
   margin: 0px 0px 15px 0px;
 }
 
-
-#echo>input {
+#echo > input {
   border: none;
   border-bottom: 1px white solid;
   background-color: transparent;
@@ -25,10 +24,10 @@
   width: 100%;
 }
 
-#echo>input:focus {
+#echo > input:focus {
   border-bottom-color: #6d85c6;
 }
 
-#echo>p {
+#echo > p {
   margin: 20px 0px 0px auto;
 }
