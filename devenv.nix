@@ -6,6 +6,18 @@
 }:
 
 {
+  files = {
+    ".yamllint.yaml".yaml = {
+      extends = "default";
+      rules = {
+        document-start = "disable";
+        truthy = "disable";
+        comments = "disable";
+        line-length.max = 120;
+      };
+    };
+  };
+
   packages = [
     pkgs.dioxus-cli
 
