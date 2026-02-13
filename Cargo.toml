@@ -1,5 +1,5 @@
 [package]
-name = "containr"
+name = "doctainr"
 version = "0.1.0"
 authors = ["Mohamed Hisham Abdelzaher <mohamed.hisham.abdelzaher@gmail.com>"]
 edition = "2021"

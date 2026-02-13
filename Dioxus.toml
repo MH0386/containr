@@ -3,7 +3,7 @@
 [web.app]
 
 # HTML title tag content
-title = "containr"
+title = "doctainr"
 
 # include `assets` in web platform
 [web.resource]

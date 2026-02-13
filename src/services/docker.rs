@@ -1,8 +1,8 @@
 use anyhow::Result;
+use bollard::Docker;
 use bollard::container::{ListContainersOptions, StartContainerOptions, StopContainerOptions};
 use bollard::image::ListImagesOptions;
 use bollard::volume::ListVolumesOptions;
-use bollard::Docker;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ContainerState {

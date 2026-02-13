@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
-use crate::utils::AppState;
 use crate::Route;
+use crate::utils::AppState;
 
 #[component]
 pub fn AppShell() -> Element {
@@ -11,7 +11,7 @@ pub fn AppShell() -> Element {
     rsx! {
         div { class: "app-shell",
             aside { class: "sidebar",
-                div { class: "brand", "Containr" }
+                div { class: "brand", "Doctainr" }
                 nav { class: "nav-list",
                     Link { to: Route::Dashboard {}, class: "nav-link", "Dashboard" }
                     Link { to: Route::Containers {}, class: "nav-link", "Containers" }
@@ -23,7 +23,7 @@ pub fn AppShell() -> Element {
             section { class: "main",
                 header { class: "main-header",
                     div {
-                        h1 { class: "app-title", "Containr Desktop" }
+                        h1 { class: "app-title", "Doctainr Desktop" }
                         p { class: "app-subtitle", "Local engine workspace" }
                     }
                     if let Some(action) = last_action {
