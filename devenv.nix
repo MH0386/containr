@@ -38,7 +38,7 @@
   tasks = {
     "dx:build" = {
       description = "Build the project";
-      exec = "${lib.getExe pkgs.dioxus-cli} build";
+      exec = "${lib.getExe pkgs.dioxus-cli} bundle";
     };
     "dx:test" = {
       description = "Run tests";
