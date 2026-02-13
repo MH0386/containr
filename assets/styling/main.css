@@ -230,3 +230,33 @@ body {
   background-color: #0f1116;
   color: #ffffff;
 }
+
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.button.primary {
+  background-color: #3f6df6;
+  color: #ffffff;
+}
+
+.button.primary:hover {
+  background-color: #5580f7;
+}
+
+.button.secondary:hover {
+  background-color: #252d3f;
+}
+
+.error-message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background-color: rgba(255, 104, 104, 0.1);
+  border: 1px solid rgba(255, 104, 104, 0.3);
+  color: #ff8686;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
