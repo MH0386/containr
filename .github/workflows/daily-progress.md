@@ -64,17 +64,16 @@ To decide which phase to perform:
    - Simplicity may be a good goal, don't overcomplicate things
    - Features can include documentation, code, tests, examples, communication plans and so on
    - If you find a relevant roadmap document, read it carefully and use it to inform your understanding of the project's feature goals
-    
 2. Use this research to create a discussion with title "${{ github.workflow }} - Research, Roadmap and Plan".
 
    **Include a "How to Control this Workflow" section at the end of the discussion that explains:**
    - The user can add comments to the discussion to provide feedback or adjustments to the plan
    - The user can use these commands:
 
-      gh aw disable daily-progress --repo ${{ github.repository }}
-      gh aw enable daily-progress --repo ${{ github.repository }}
-      gh aw run daily-progress --repo ${{ github.repository }} --repeat <number-of-repeats>
-      gh aw logs daily-progress --repo ${{ github.repository }}
+     gh aw disable daily-progress --repo ${{ github.repository }}
+     gh aw enable daily-progress --repo ${{ github.repository }}
+     gh aw run daily-progress --repo ${{ github.repository }} --repeat <number-of-repeats>
+     gh aw logs daily-progress --repo ${{ github.repository }}
 
    **Include a "What Happens Next" section at the end of the discussion that explains:**
    - The next time this workflow runs, it will begin implementing features from the roadmap based on the plan
@@ -90,15 +89,15 @@ To decide which phase to perform:
    a. Read the plan in the discussion mentioned earlier, along with comments.
 
    b. Check for existing open pull requests (especially yours with "${{ github.workflow }}" prefix). Avoid duplicate work.
-   
+
    c. If plan needs updating then comment on planning discussion with revised plan and rationale. Consider maintainer feedback.
-  
+
    d. Select a goal to pursue from the plan. Ensure that you have a good understanding of the code and the feature requirements before proceeding. Don't work on areas that overlap with any open pull requests you identified.
 
 2. **Work towards your selected goal**. For the roadmap feature you selected, do the following:
 
    a. Create a new branch.
-   
+
    b. Make the changes to work towards the goal you selected.
 
    c. Ensure the code still works as expected and that any existing relevant tests pass. Add new tests if appropriate and make sure they pass too.
@@ -106,23 +105,23 @@ To decide which phase to perform:
 3. **Finalizing changes**
 
    a. Apply any automatic code formatting used in the repo. If necessary check CI files to understand what code formatting is used.
-   
+
    b. Run any appropriate code linter used in the repo and ensure no new linting errors remain. If necessary check CI files to understand what code linting is used.
 
 4. **Results and learnings**
 
    a. If you succeeded in writing useful code changes that work on the feature roadmap, create a draft pull request with your changes.
 
-      **Critical:** Exclude tool-generated files from PR. Double-check added files and remove any that don't belong.
+   **Critical:** Exclude tool-generated files from PR. Double-check added files and remove any that don't belong.
 
-      In the description, explain:
-      - **Goal and rationale:** Feature chosen and why it matters
-      - **Approach:** Strategy, methodology, and implementation steps
-      - **Impact:** What changed and what was added or improved
-      - **Validation:** Testing approach and success criteria met
-      - **Future work:** Additional opportunities identified
+   In the description, explain:
+   - **Goal and rationale:** Feature chosen and why it matters
+   - **Approach:** Strategy, methodology, and implementation steps
+   - **Impact:** What changed and what was added or improved
+   - **Validation:** Testing approach and success criteria met
+   - **Future work:** Additional opportunities identified
 
-      After creation, check the pull request to ensure it is correct, includes all expected files, and doesn't include any unwanted files or changes. Make any necessary corrections by pushing further commits to the branch.
+   After creation, check the pull request to ensure it is correct, includes all expected files, and doesn't include any unwanted files or changes. Make any necessary corrections by pushing further commits to the branch.
 
 5. **Final update**: Add brief comment (1 or 2 sentences) to the discussion identified at the start of the workflow stating goal worked on, PR links, and progress made.
 
