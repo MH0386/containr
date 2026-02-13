@@ -16,6 +16,14 @@ pub fn Containers() -> Element {
             subtitle: Some("Manage running services".to_string())
         }
 
+        div { class: "action-bar",
+            button {
+                class: "button primary",
+                onclick: move |_| app_state.refresh_containers(),
+                "Refresh"
+            }
+        }
+
         div { class: "table",
             div { class: "row header",
                 span { "Name" }

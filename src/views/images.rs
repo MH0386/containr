@@ -14,6 +14,14 @@ pub fn Images() -> Element {
             subtitle: Some("Local image cache".to_string())
         }
 
+        div { class: "action-bar",
+            button {
+                class: "button primary",
+                onclick: move |_| app_state.refresh_images(),
+                "Refresh"
+            }
+        }
+
         div { class: "table",
             div { class: "row header",
                 span { "Repository" }

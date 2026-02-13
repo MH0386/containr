@@ -1,6 +1,3 @@
 mod docker;
 
-pub use docker::{
-    mock_containers, mock_images, mock_volumes, ContainerInfo, ContainerState, ImageInfo,
-    VolumeInfo,
-};
+pub use docker::{ContainerInfo, ContainerState, DockerService, ImageInfo, VolumeInfo};

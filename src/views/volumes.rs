@@ -14,6 +14,14 @@ pub fn Volumes() -> Element {
             subtitle: Some("Persistent storage".to_string())
         }
 
+        div { class: "action-bar",
+            button {
+                class: "button primary",
+                onclick: move |_| app_state.refresh_volumes(),
+                "Refresh"
+            }
+        }
+
         div { class: "table",
             div { class: "row header",
                 span { "Name" }

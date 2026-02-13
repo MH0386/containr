@@ -1,3 +1,9 @@
+use anyhow::Result;
+use bollard::container::{ListContainersOptions, StartContainerOptions, StopContainerOptions};
+use bollard::image::ListImagesOptions;
+use bollard::volume::ListVolumesOptions;
+use bollard::Docker;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ContainerState {
     Running,
@@ -53,73 +59,185 @@ pub struct VolumeInfo {
     pub size: String,
 }
 
-pub fn mock_containers() -> Vec<ContainerInfo> {
-    vec![
-        ContainerInfo {
-            id: "1a2b3c4d".to_string(),
-            name: "api-gateway".to_string(),
-            image: "nginx:1.25".to_string(),
-            status: "Up 12 minutes".to_string(),
-            ports: "80:8080".to_string(),
-            state: ContainerState::Running,
-        },
-        ContainerInfo {
-            id: "5e6f7g8h".to_string(),
-            name: "payments".to_string(),
-            image: "rust-payments:local".to_string(),
-            status: "Exited (0) 2 hours ago".to_string(),
-            ports: "--".to_string(),
-            state: ContainerState::Stopped,
-        },
-        ContainerInfo {
-            id: "9i0j1k2l".to_string(),
-            name: "redis".to_string(),
-            image: "redis:7".to_string(),
-            status: "Up 4 days".to_string(),
-            ports: "6379:6379".to_string(),
-            state: ContainerState::Running,
-        },
-    ]
+#[derive(Clone)]
+pub struct DockerService {
+    docker: Docker,
 }
 
-pub fn mock_images() -> Vec<ImageInfo> {
-    vec![
-        ImageInfo {
-            id: "sha256:aa11".to_string(),
-            repository: "nginx".to_string(),
-            tag: "1.25".to_string(),
-            size: "146MB".to_string(),
-        },
-        ImageInfo {
-            id: "sha256:bb22".to_string(),
-            repository: "redis".to_string(),
-            tag: "7".to_string(),
-            size: "117MB".to_string(),
-        },
-        ImageInfo {
-            id: "sha256:cc33".to_string(),
-            repository: "rust-payments".to_string(),
-            tag: "local".to_string(),
-            size: "512MB".to_string(),
-        },
-    ]
+impl DockerService {
+    pub fn new() -> Result<Self> {
+        let docker = Docker::connect_with_local_defaults()?;
+        Ok(Self { docker })
+    }
+
+    pub async fn list_containers(&self) -> Result<Vec<ContainerInfo>> {
+        let options = Some(ListContainersOptions::<String> {
+            all: true,
+            ..Default::default()
+        });
+
+        let containers = self.docker.list_containers(options).await?;
+
+        let container_infos = containers
+            .into_iter()
+            .map(|container| {
+                let id = container
+                    .id
+                    .as_ref()
+                    .map(|s| s.chars().take(12).collect())
+                    .unwrap_or_else(|| "unknown".to_string());
+
+                let name = container
+                    .names
+                    .as_ref()
+                    .and_then(|names| names.first())
+                    .map(|n| n.trim_start_matches('/').to_string())
+                    .unwrap_or_else(|| "unnamed".to_string());
+
+                let image = container.image.unwrap_or_else(|| "unknown".to_string());
+
+                let status = container.status.unwrap_or_else(|| "unknown".to_string());
+
+                let ports = if let Some(ports) = container.ports {
+                    if ports.is_empty() {
+                        "--".to_string()
+                    } else {
+                        ports
+                            .iter()
+                            .filter_map(|p| match (p.public_port, p.private_port) {
+                                (Some(pub_port), priv_port) => {
+                                    Some(format!("{}:{}", pub_port, priv_port))
+                                }
+                                (None, priv_port) => Some(format!("{}", priv_port)),
+                            })
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                    }
+                } else {
+                    "--".to_string()
+                };
+
+                let state = if let Some(st) = container.state {
+                    if st == "running" {
+                        ContainerState::Running
+                    } else {
+                        ContainerState::Stopped
+                    }
+                } else {
+                    ContainerState::Stopped
+                };
+
+                ContainerInfo {
+                    id,
+                    name,
+                    image,
+                    status,
+                    ports,
+                    state,
+                }
+            })
+            .collect();
+
+        Ok(container_infos)
+    }
+
+    pub async fn list_images(&self) -> Result<Vec<ImageInfo>> {
+        let options = Some(ListImagesOptions::<String> {
+            all: false,
+            ..Default::default()
+        });
+
+        let images = self.docker.list_images(options).await?;
+
+        let image_infos = images
+            .into_iter()
+            .map(|image| {
+                let id = image.id;
+
+                // Parse repository and tag from repo_tags (Vec<String>)
+                let (repository, tag) = if let Some(first) = image.repo_tags.first() {
+                    let parts: Vec<&str> = first.split(':').collect();
+                    let repo = parts.first().unwrap_or(&"<none>").to_string();
+                    let tag_part = parts.get(1).unwrap_or(&"<none>").to_string();
+                    (repo, tag_part)
+                } else {
+                    ("<none>".to_string(), "<none>".to_string())
+                };
+
+                // Format size directly (it's i64, not Option<i64>)
+                let size = format_size(image.size);
+
+                ImageInfo {
+                    id,
+                    repository,
+                    tag,
+                    size,
+                }
+            })
+            .collect();
+
+        Ok(image_infos)
+    }
+
+    pub async fn list_volumes(&self) -> Result<Vec<VolumeInfo>> {
+        let options = ListVolumesOptions::<String> {
+            ..Default::default()
+        };
+
+        let volumes_response = self.docker.list_volumes(Some(options)).await?;
+
+        let volume_infos = volumes_response
+            .volumes
+            .unwrap_or_default()
+            .into_iter()
+            .map(|volume| {
+                let name = volume.name;
+                let driver = volume.driver;
+                let mountpoint = volume.mountpoint;
+                // Note: Size is not directly available from Docker API without additional inspection
+                let size = "--".to_string();
+
+                VolumeInfo {
+                    name,
+                    driver,
+                    mountpoint,
+                    size,
+                }
+            })
+            .collect();
+
+        Ok(volume_infos)
+    }
+
+    pub async fn start_container(&self, id: &str) -> Result<()> {
+        self.docker
+            .start_container(id, None::<StartContainerOptions<String>>)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn stop_container(&self, id: &str) -> Result<()> {
+        self.docker
+            .stop_container(id, None::<StopContainerOptions>)
+            .await?;
+        Ok(())
+    }
 }
 
-pub fn mock_volumes() -> Vec<VolumeInfo> {
-    vec![
-        VolumeInfo {
-            name: "containr-cache".to_string(),
-            driver: "local".to_string(),
-            mountpoint: "/var/lib/docker/volumes/containr-cache".to_string(),
-            size: "2.4GB".to_string(),
-        },
-        VolumeInfo {
-            name: "postgres-data".to_string(),
-            driver: "local".to_string(),
-            mountpoint: "/var/lib/docker/volumes/postgres-data".to_string(),
-            size: "8.1GB".to_string(),
-        },
-    ]
+fn format_size(size: i64) -> String {
+    const KB: i64 = 1024;
+    const MB: i64 = KB * 1024;
+    const GB: i64 = MB * 1024;
+
+    if size >= GB {
+        format!("{:.1}GB", size as f64 / GB as f64)
+    } else if size >= MB {
+        format!("{:.1}MB", size as f64 / MB as f64)
+    } else if size >= KB {
+        format!("{:.1}KB", size as f64 / KB as f64)
+    } else {
+        format!("{}B", size)
+    }
 }
 
 #[cfg(test)]
@@ -127,16 +245,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn mock_data_contains_running_container() {
-        let containers = mock_containers();
-        assert!(containers
-            .iter()
-            .any(|container| container.state == ContainerState::Running));
-    }
-
-    #[test]
     fn container_state_labels_match() {
         assert_eq!(ContainerState::Running.label(), "Running");
         assert_eq!(ContainerState::Stopped.label(), "Stopped");
+    }
+
+    #[test]
+    fn test_format_size() {
+        assert_eq!(format_size(100), "100B");
+        assert_eq!(format_size(1024), "1.0KB");
+        assert_eq!(format_size(1048576), "1.0MB");
+        assert_eq!(format_size(1073741824), "1.0GB");
     }
 }

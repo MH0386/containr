@@ -12,6 +12,7 @@ pub fn Dashboard() -> Element {
     let images = (app_state.images)();
     let volumes = (app_state.volumes)();
     let docker_host = (app_state.docker_host)();
+    let error_message = (app_state.error_message)();
 
     let running = containers
         .iter()
@@ -23,6 +24,20 @@ pub fn Dashboard() -> Element {
         SectionHeader {
             title: "Dashboard".to_string(),
             subtitle: Some("Overview of your local Docker engine".to_string())
+        }
+
+        if let Some(error) = error_message {
+            div { class: "error-message",
+                "⚠️ {error}"
+            }
+        }
+
+        div { class: "action-bar",
+            button {
+                class: "button primary",
+                onclick: move |_| app_state.refresh_all(),
+                "Refresh All"
+            }
         }
 
         div { class: "cards",
