@@ -1,21 +1,10 @@
 [application]
+name = "doctainr"
 
 [web.app]
-
-# HTML title tag content
 title = "doctainr"
 
-# include `assets` in web platform
-[web.resource]
-
-# Additional CSS style files
-style = []
-
-# Additional JavaScript files
-script = []
-
-[web.resource.dev]
-
-# Javascript code file
-# serve: [dev-server] only
-script = []
+[bundle]
+identifier = "com.mh0386"
+publisher = "Doctainr"
+icon = ["assets/icon.svg"]
