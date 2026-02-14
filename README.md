@@ -110,13 +110,33 @@ cargo clippy
 
 [Your License Here]-->
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **[Architecture Reference](docs/architecture.md)** - System design, data flow, and technical architecture
+- **[Development Guide](docs/development.md)** - Setup, workflow, and extending Doctainr
+- **[API Reference](docs/api-reference.md)** - Complete API documentation for all modules
+- **[Contributing Guide](docs/contributing.md)** - How to contribute code, report bugs, and coding standards
+- **[Troubleshooting Guide](docs/troubleshooting.md)** - Common issues and solutions
+
 ## 🤝 Contributing
 
-Contributions are welcome\! Please feel free to submit a Pull Request.
+Contributions are welcome! Please read our [Contributing Guide](docs/contributing.md) before submitting a Pull Request.
+
+Quick start for contributors:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Follow our [code style guidelines](docs/contributing.md#code-style-guidelines)
+4. Test your changes: `cargo test`
+5. Submit a pull request
 
 ## 📧 Support
 
-For issues and questions, please open an issue on GitHub.
+- **Issues**: For bugs and feature requests, open an issue on GitHub
+- **Documentation**: Check the [docs/](docs/) directory first
+- **Questions**: Use GitHub Discussions for questions and community support
 
 ---
 
