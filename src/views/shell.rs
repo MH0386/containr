@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
-use crate::utils::AppState;
 use crate::Route;
+use crate::utils::AppState;
 
 #[component]
 pub fn AppShell() -> Element {
