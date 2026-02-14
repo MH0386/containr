@@ -1,4 +1,7 @@
-//! Shared UI building blocks for the app shell and pages.
+//! Reusable UI components.
+//!
+//! This module provides small, composable UI building blocks like
+//! cards, pills, and section headers that are used across multiple views.
 
 mod metric_card;
 pub use metric_card::MetricCard;

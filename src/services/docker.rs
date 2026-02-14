@@ -1,16 +1,22 @@
+//! Docker API service layer for managing containers, images, and volumes.
+
 use anyhow::Result;
 use bollard::Docker;
 use bollard::container::{ListContainersOptions, StartContainerOptions, StopContainerOptions};
 use bollard::image::ListImagesOptions;
 use bollard::volume::ListVolumesOptions;
 
+/// Represents the runtime state of a Docker container.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ContainerState {
+    /// Container is currently running
     Running,
+    /// Container is stopped
     Stopped,
 }
 
 impl ContainerState {
+    /// Returns a human-readable label for the container state.
     pub fn label(&self) -> &'static str {
         match self {
             ContainerState::Running => "Running",
@@ -18,6 +24,7 @@ impl ContainerState {
         }
     }
 
+    /// Returns the CSS class name for styling this state.
     pub fn css_class(&self) -> &'static str {
         match self {
             ContainerState::Running => "running",
@@ -25,6 +32,7 @@ impl ContainerState {
         }
     }
 
+    /// Returns the action label for the opposite state transition.
     pub fn action_label(&self) -> &'static str {
         match self {
             ContainerState::Running => "Stop",
@@ -33,43 +41,92 @@ impl ContainerState {
     }
 }
 
+/// Information about a Docker container.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ContainerInfo {
+    /// Short container ID (first 12 characters)
     pub id: String,
+    /// Container name without leading slash
     pub name: String,
+    /// Source image name
     pub image: String,
+    /// Container status text from Docker
     pub status: String,
+    /// Formatted port mappings (e.g., "8080:80, 443:443")
     pub ports: String,
+    /// Current runtime state
     pub state: ContainerState,
 }
 
+/// Information about a Docker image.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ImageInfo {
+    /// Full image ID
     pub id: String,
+    /// Repository name
     pub repository: String,
+    /// Image tag
     pub tag: String,
+    /// Formatted size (e.g., "1.2GB")
     pub size: String,
 }
 
+/// Information about a Docker volume.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct VolumeInfo {
+    /// Volume name
     pub name: String,
+    /// Storage driver
     pub driver: String,
+    /// Host filesystem mount point
     pub mountpoint: String,
+    /// Formatted size (currently "--" as not available from API)
     pub size: String,
 }
 
+/// Service for interacting with the Docker daemon.
+///
+/// Wraps the Bollard Docker client and provides simplified methods
+/// for common operations like listing containers, starting/stopping
+/// containers, and managing images and volumes.
 #[derive(Clone)]
 pub struct DockerService {
     docker: Docker,
 }
 
 impl DockerService {
+    /// Creates a new Docker service using local defaults.
+    ///
+    /// # Returns
+    ///
+    /// A new `DockerService` instance connected to the local Docker daemon.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if unable to connect to the Docker daemon.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// use doctainr::services::DockerService;
+    ///
+    /// let service = DockerService::new()?;
+    /// # Ok::<(), anyhow::Error>(())
+    /// ```
     pub fn new() -> Result<Self> {
         let docker = Docker::connect_with_local_defaults()?;
         Ok(Self { docker })
     }
 
+    /// Lists all Docker containers (running and stopped).
+    ///
+    /// # Returns
+    ///
+    /// A vector of `ContainerInfo` with details about each container.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the Docker API call fails.
     pub async fn list_containers(&self) -> Result<Vec<ContainerInfo>> {
         let options = Some(ListContainersOptions::<String> {
             all: true,
@@ -141,6 +198,15 @@ impl DockerService {
         Ok(container_infos)
     }
 
+    /// Lists all Docker images on the local machine.
+    ///
+    /// # Returns
+    ///
+    /// A vector of `ImageInfo` with details about each image.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the Docker API call fails.
     pub async fn list_images(&self) -> Result<Vec<ImageInfo>> {
         let options = Some(ListImagesOptions::<String> {
             all: false,
@@ -179,6 +245,15 @@ impl DockerService {
         Ok(image_infos)
     }
 
+    /// Lists all Docker volumes.
+    ///
+    /// # Returns
+    ///
+    /// A vector of `VolumeInfo` with details about each volume.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the Docker API call fails.
     pub async fn list_volumes(&self) -> Result<Vec<VolumeInfo>> {
         let options = ListVolumesOptions::<String> {
             ..Default::default()
@@ -209,6 +284,15 @@ impl DockerService {
         Ok(volume_infos)
     }
 
+    /// Starts a stopped container.
+    ///
+    /// # Arguments
+    ///
+    /// * `id` - Container ID or name
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the container doesn't exist or cannot be started.
     pub async fn start_container(&self, id: &str) -> Result<()> {
         self.docker
             .start_container(id, None::<StartContainerOptions<String>>)
@@ -216,6 +300,15 @@ impl DockerService {
         Ok(())
     }
 
+    /// Stops a running container.
+    ///
+    /// # Arguments
+    ///
+    /// * `id` - Container ID or name
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the container doesn't exist or cannot be stopped.
     pub async fn stop_container(&self, id: &str) -> Result<()> {
         self.docker
             .stop_container(id, None::<StopContainerOptions>)
@@ -224,6 +317,7 @@ impl DockerService {
     }
 }
 
+/// Formats a byte size into a human-readable string with appropriate units.
 fn format_size(size: i64) -> String {
     const KB: i64 = 1024;
     const MB: i64 = KB * 1024;
