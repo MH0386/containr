@@ -77,17 +77,17 @@ dx run
 ### Build for Development
 
 ```bash
-# Run with hot reload (if using dx)
+# Run with hot reload
 dx serve --platform desktop
 
-# Or standard cargo
-cargo run
+# Or run directly
+dx run
 ```
 
 ### Build for Release
 
 ```bash
-cargo build --release
+dx build --release
 ```
 
 ### Run Tests
@@ -100,10 +100,10 @@ cargo test
 
 ```bash
 # Format code
-cargo fmt
+dx fmt
 
-# Run linter
-cargo clippy
+# Run linter and checks
+dx check
 ```
 
 ## 📚 Documentation

@@ -355,7 +355,7 @@ docker inspect <container-id>
 
 ### Build Fails
 
-**Problem**: `cargo build` or `dx build` fails
+**Problem**: `dx build` fails
 
 **Solutions**:
 
@@ -366,8 +366,8 @@ docker inspect <container-id>
 
 2. **Clean and rebuild**:
    ```bash
-   cargo clean
-   cargo build
+   dx clean
+   dx build
    ```
 
 3. **Check dependency versions**:
@@ -382,15 +382,15 @@ docker inspect <container-id>
    # Edit ~/.cargo/config.toml
    ```
 
-### Clippy Errors
+### Linting Errors
 
-**Problem**: `cargo clippy` reports errors
+**Problem**: `dx check` reports errors
 
 **Solutions**:
 
-1. **Fix automatically**:
+1. **Review and fix issues**:
    ```bash
-   cargo clippy --fix
+   dx check
    ```
 
 2. **Allow specific lints** (if false positive):
@@ -454,7 +454,7 @@ cargo test test_name -- --nocapture
 
 3. **Clear build cache**:
    ```bash
-   cargo clean
+   dx clean
    dx serve --platform desktop
    ```
 

@@ -80,8 +80,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # Install Dioxus CLI
 cargo install dioxus-cli
 
-# Install dependencies
-cargo build
+# Build dependencies
+dx build
 ```
 
 ### Verify Setup
@@ -288,10 +288,9 @@ mod tests {
 
 4. **Run quality checks**:
    ```bash
-   cargo fmt
-   cargo clippy
-   cargo test
+   dx fmt
    dx check
+   cargo test
    ```
 
 5. **Commit your changes**:

@@ -25,9 +25,6 @@ Ensure you have:
 ```bash
 # Optimized release build
 dx bundle --release
-
-# Or with cargo directly
-cargo build --release
 ```
 
 The release binary will be located at:
@@ -57,9 +54,8 @@ icon = ["assets/icon.svg"]
 For smaller binary sizes:
 
 ```bash
-# Strip symbols
-cargo build --release
-strip target/release/doctainr
+# Strip symbols from bundled binary
+strip target/dx/doctainr/release/bundle/doctainr
 
 # Use cargo-bloat to analyze size
 cargo install cargo-bloat
@@ -455,12 +451,12 @@ sha256sums=('...')
 
 build() {
     cd "$pkgname-$pkgver"
-    cargo build --release
+    dx bundle --release
 }
 
 package() {
     cd "$pkgname-$pkgver"
-    install -Dm755 "target/release/$pkgname" "$pkgdir/usr/bin/$pkgname"
+    install -Dm755 "target/dx/$pkgname/release/bundle/$pkgname" "$pkgdir/usr/bin/$pkgname"
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
 ```

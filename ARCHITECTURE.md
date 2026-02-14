@@ -315,8 +315,8 @@ enum Route {
 ### Build Process
 
 ```bash
-dx bundle        # Dioxus CLI builds desktop app
-cargo build      # Standard Rust build
+dx build         # Development build
+dx bundle        # Production build for desktop app
 ```
 
 ### Platform Support

@@ -79,7 +79,7 @@ cd doctainr
 devenv shell
 
 # Option 2: Manual setup
-cargo build
+dx build
 ```
 
 ### Verify Installation
@@ -134,20 +134,18 @@ Without devenv:
 
 ```bash
 # Format code
-cargo fmt
+dx fmt
 
-# Run linter
-cargo clippy
+# Run linter and checks
+dx check
 
 # Run tests
 cargo test
 
 # Build
-cargo build
+dx build
 
 # Run
-cargo run
-# or
 dx run
 ```
 
@@ -156,11 +154,8 @@ dx run
 ### Development Build
 
 ```bash
-# Using Dioxus CLI (faster)
+# Using Dioxus CLI (recommended)
 dx build
-
-# Using Cargo
-cargo build
 ```
 
 ### Release Build
@@ -168,13 +163,9 @@ cargo build
 ```bash
 # Optimized release build
 dx build --release
-
-# Or with Cargo
-cargo build --release
 ```
 
 The release binary will be at:
-- Cargo: `target/release/doctainr`
 - Dioxus: `target/dx/doctainr/release/bundle/`
 
 ### Build Features
@@ -183,10 +174,10 @@ The project supports multiple build targets:
 
 ```bash
 # Desktop (default)
-cargo build --features desktop
+dx build --features desktop
 
 # Web (experimental)
-cargo build --features web
+dx build --features web
 ```
 
 ## Running the Application
@@ -194,18 +185,18 @@ cargo build --features web
 ### Development Mode
 
 ```bash
-# Using Dioxus CLI (with hot reload)
+# Using Dioxus CLI with hot reload (recommended)
 dx serve --platform desktop
 
-# Using Cargo
-cargo run
+# Or run directly
+dx run
 ```
 
 ### Release Mode
 
 ```bash
-# Run optimized binary
-cargo run --release
+# Run optimized build
+dx run --release
 ```
 
 ### Docker Requirements
@@ -316,33 +307,17 @@ mod tests {
 
 ```bash
 # Format all code
-cargo fmt
+dx fmt
 
 # Check formatting without modifying
-cargo fmt -- --check
+dx fmt -- --check
 ```
 
 ### Linting
 
 ```bash
-# Run Clippy
-cargo clippy
-
-# Strict mode
-cargo clippy -- -D warnings
-
-# Fix automatic issues
-cargo clippy --fix
-```
-
-### Dioxus Checks
-
-```bash
-# Check Dioxus-specific issues
+# Run checks including Clippy
 dx check
-
-# Format RSX
-dx fmt
 ```
 
 ### Pre-commit Checks
@@ -351,7 +326,7 @@ Run before committing:
 
 ```bash
 # Format, lint, and test
-cargo fmt && cargo clippy && cargo test
+dx fmt && dx check && cargo test
 
 # Or with devenv
 devenv test
@@ -382,12 +357,12 @@ Using rust-gdb or rust-lldb:
 
 ```bash
 # Build with debug info
-cargo build
+dx build
 
 # Debug
-rust-gdb target/debug/doctainr
+rust-gdb target/dx/doctainr/debug/doctainr
 # or
-rust-lldb target/debug/doctainr
+rust-lldb target/dx/doctainr/debug/doctainr
 ```
 
 ### VS Code Debugging
@@ -578,10 +553,9 @@ Simulate CI checks:
 devenv test
 
 # Or manually
-cargo fmt -- --check
-cargo clippy -- -D warnings
-cargo test
+dx fmt -- --check
 dx check
+cargo test
 ```
 
 ### Profiling Performance
@@ -605,8 +579,8 @@ perf report
 
 ```bash
 # Clean and rebuild
-cargo clean
-cargo build
+dx clean
+dx build
 
 # Update toolchain
 rustup update
@@ -633,8 +607,8 @@ sudo apt-get install --reinstall libgtk-3-dev libwebkit2gtk-4.1-dev
 ## Best Practices
 
 1. **Run tests frequently**: `cargo test`
-2. **Format before commit**: `cargo fmt`
-3. **Check with clippy**: `cargo clippy`
+2. **Format before commit**: `dx fmt`
+3. **Check with linter**: `dx check`
 4. **Write documentation**: Add doc comments
 5. **Keep commits small**: Focused, atomic changes
 6. **Update tests**: Test new features
