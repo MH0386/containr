@@ -1,16 +1,25 @@
+//! Docker service integration for managing containers, images, and volumes.
+//!
+//! This module provides a high-level interface to the Docker Engine API using the Bollard library.
+//! It handles all Docker operations including listing, starting, and stopping containers.
+
 use anyhow::Result;
 use bollard::container::{ListContainersOptions, StartContainerOptions, StopContainerOptions};
 use bollard::image::ListImagesOptions;
 use bollard::volume::ListVolumesOptions;
 use bollard::Docker;
 
+/// Represents the runtime state of a Docker container.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ContainerState {
+    /// Container is currently running and active
     Running,
+    /// Container is stopped or paused
     Stopped,
 }
 
 impl ContainerState {
+    /// Returns a human-readable label for the container state.
     pub fn label(&self) -> &'static str {
         match self {
             ContainerState::Running => "Running",
@@ -18,6 +27,7 @@ impl ContainerState {
         }
     }
 
+    /// Returns the CSS class name for styling this container state.
     pub fn css_class(&self) -> &'static str {
         match self {
             ContainerState::Running => "running",
@@ -25,6 +35,7 @@ impl ContainerState {
         }
     }
 
+    /// Returns the action button label for toggling this container state.
     pub fn action_label(&self) -> &'static str {
         match self {
             ContainerState::Running => "Stop",
@@ -33,43 +44,83 @@ impl ContainerState {
     }
 }
 
+/// Information about a Docker container including its configuration and runtime state.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ContainerInfo {
+    /// Unique container ID (typically first 12 characters of the full ID)
     pub id: String,
+    /// Human-readable container name (without leading slash)
     pub name: String,
+    /// Docker image name that the container was created from
     pub image: String,
+    /// Detailed status description from Docker Engine
     pub status: String,
+    /// Port mappings in format "host:container" or empty if none
     pub ports: String,
+    /// Current runtime state (Running or Stopped)
     pub state: ContainerState,
 }
 
+/// Information about a Docker image stored locally.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ImageInfo {
+    /// Unique image ID (typically first 12 characters)
     pub id: String,
+    /// Image repository name (e.g., "nginx", "alpine")
     pub repository: String,
+    /// Image tag (e.g., "latest", "1.0.0")
     pub tag: String,
+    /// Human-readable size of the image (e.g., "125MB")
     pub size: String,
 }
 
+/// Information about a Docker volume for persistent data storage.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct VolumeInfo {
+    /// Unique volume name
     pub name: String,
+    /// Storage driver used (typically "local")
     pub driver: String,
+    /// Filesystem path where the volume is mounted
     pub mountpoint: String,
+    /// Human-readable size of the volume
     pub size: String,
 }
 
+/// Service for interacting with the Docker Engine API.
+///
+/// This service uses the Bollard library to communicate with Docker and provides
+/// high-level operations for managing containers, images, and volumes.
 #[derive(Clone)]
 pub struct DockerService {
     docker: Docker,
 }
 
 impl DockerService {
+    /// Creates a new Docker service by connecting to the local Docker daemon.
+    ///
+    /// This uses the default connection method which will try:
+    /// 1. Unix socket at /var/run/docker.sock (Linux/Mac)
+    /// 2. Named pipe (Windows)
+    /// 3. DOCKER_HOST environment variable if set
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if Docker is not running or connection fails.
     pub fn new() -> Result<Self> {
         let docker = Docker::connect_with_local_defaults()?;
         Ok(Self { docker })
     }
 
+    /// Lists all Docker containers (both running and stopped).
+    ///
+    /// # Returns
+    ///
+    /// A vector of `ContainerInfo` with details about each container.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the Docker API call fails.
     pub async fn list_containers(&self) -> Result<Vec<ContainerInfo>> {
         let options = Some(ListContainersOptions::<String> {
             all: true,
@@ -141,6 +192,15 @@ impl DockerService {
         Ok(container_infos)
     }
 
+    /// Lists all Docker images stored locally.
+    ///
+    /// # Returns
+    ///
+    /// A vector of `ImageInfo` with repository, tag, ID, and size information.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the Docker API call fails.
     pub async fn list_images(&self) -> Result<Vec<ImageInfo>> {
         let options = Some(ListImagesOptions::<String> {
             all: false,
@@ -179,6 +239,15 @@ impl DockerService {
         Ok(image_infos)
     }
 
+    /// Lists all Docker volumes for persistent data storage.
+    ///
+    /// # Returns
+    ///
+    /// A vector of `VolumeInfo` with name, driver, and mount point information.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the Docker API call fails.
     pub async fn list_volumes(&self) -> Result<Vec<VolumeInfo>> {
         let options = ListVolumesOptions::<String> {
             ..Default::default()
@@ -209,6 +278,15 @@ impl DockerService {
         Ok(volume_infos)
     }
 
+    /// Starts a stopped Docker container.
+    ///
+    /// # Arguments
+    ///
+    /// * `id` - The container ID or name to start
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the container doesn't exist or cannot be started.
     pub async fn start_container(&self, id: &str) -> Result<()> {
         self.docker
             .start_container(id, None::<StartContainerOptions<String>>)
@@ -216,6 +294,15 @@ impl DockerService {
         Ok(())
     }
 
+    /// Stops a running Docker container.
+    ///
+    /// # Arguments
+    ///
+    /// * `id` - The container ID or name to stop
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the container doesn't exist or cannot be stopped.
     pub async fn stop_container(&self, id: &str) -> Result<()> {
         self.docker
             .stop_container(id, None::<StopContainerOptions>)

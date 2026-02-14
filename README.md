@@ -106,6 +106,21 @@ cargo fmt
 cargo clippy
 ```
 
+## 📄 Documentation
+
+- **[Architecture](docs/architecture.md)** - System design and technical details
+- **[Development Guide](docs/development.md)** - How to build and extend Doctainr
+- **[Contributing](docs/contributing.md)** - Guidelines for contributors
+- **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
+
+## 📄 API Documentation
+
+Generate and view the API documentation:
+
+````bash
+cargo doc --open
+````
+
 <!--## 📄 License
 
 [Your License Here]-->
@@ -113,6 +128,8 @@ cargo clippy
 ## 🤝 Contributing
 
 Contributions are welcome\! Please feel free to submit a Pull Request.
+
+See **[CONTRIBUTING.md](CONTRIBUTING.md)** for guidelines.
 
 ## 📧 Support
 
