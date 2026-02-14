@@ -110,13 +110,42 @@ cargo clippy
 
 [Your License Here]-->
 
+## 📚 Documentation
+
+- **[Development Setup](docs/tutorials/development-setup.md)** - Complete dev environment guide
+- **[Architecture Overview](docs/reference/architecture.md)** - System design and module structure
+- **[Troubleshooting](docs/how-to/troubleshooting.md)** - Common issues and solutions
+- **[State Management](docs/explanation/state-management.md)** - How reactive state works
+- **[Docker Integration](docs/explanation/docker-integration.md)** - Bollard implementation details
+
+## 🔧 Troubleshooting
+
+### Docker Connection Issues
+
+If you see "Failed to connect to Docker", ensure:
+
+1. Docker is running: `docker info`
+2. You have permissions (Linux): `sudo usermod -aG docker $USER`
+3. Socket is accessible: Check `DOCKER_HOST` environment variable
+
+For more solutions, see the [Troubleshooting Guide](docs/how-to/troubleshooting.md).
+
 ## 🤝 Contributing
 
-Contributions are welcome\! Please feel free to submit a Pull Request.
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for:
+
+- Development workflow
+- Coding standards
+- Testing requirements
+- Commit message conventions
 
 ## 📧 Support
 
-For issues and questions, please open an issue on GitHub.
+For issues and questions:
+
+- **Bug reports**: [GitHub Issues](https://github.com/MH0386/doctainr/issues)
+- **Questions**: [GitHub Discussions](https://github.com/MH0386/doctainr/discussions)
+- **Documentation**: See [docs/](docs/) directory
 
 ---
 
