@@ -1,20 +1,63 @@
+//! Global application state management.
+//!
+//! This module provides the `AppState` struct which manages all reactive state
+//! for the Doctainr application using Dioxus signals.
+
 use dioxus::prelude::*;
 
 use crate::services::{ContainerInfo, ContainerState, DockerService, ImageInfo, VolumeInfo};
 
+/// Global application state for managing Docker resources and UI state.
+///
+/// This struct contains reactive signals that automatically trigger UI updates
+/// when their values change. It also holds a reference to the DockerService
+/// for performing operations on the Docker daemon.
 #[derive(Clone)]
 pub struct AppState {
+    /// Docker host connection string
     pub docker_host: Signal<String>,
+    /// List of all Docker containers
     pub containers: Signal<Vec<ContainerInfo>>,
+    /// List of all Docker images
     pub images: Signal<Vec<ImageInfo>>,
+    /// List of all Docker volumes
     pub volumes: Signal<Vec<VolumeInfo>>,
+    /// Last action message for user feedback
     pub last_action: Signal<Option<String>>,
+    /// Current error message, if any
     pub error_message: Signal<Option<String>>,
+    /// Loading state indicator
     pub is_loading: Signal<bool>,
+    /// Docker service instance for API operations
     docker_service: Option<DockerService>,
 }
 
 impl AppState {
+    /// Creates a new AppState instance and initializes the Docker connection.
+    ///
+    /// This function:
+    /// 1. Attempts to connect to the Docker daemon
+    /// 2. Initializes all reactive signals
+    /// 3. Triggers an initial data load
+    ///
+    /// # Returns
+    /// A new `AppState` instance
+    ///
+    /// # Example
+    /// ```no_run
+    /// use dioxus::prelude::*;
+    /// use doctainr::utils::AppState;
+    ///
+    /// #[component]
+    /// fn App() -> Element {
+    ///     let app_state = AppState::new();
+    ///     use_context_provider(|| app_state);
+    ///
+    ///     rsx! {
+    ///         div { "App content" }
+    ///     }
+    /// }
+    /// ```
     pub fn new() -> Self {
         let docker_service = match DockerService::new() {
             Ok(service) => Some(service),
@@ -52,6 +95,10 @@ impl AppState {
         state
     }
 
+    /// Refreshes all Docker data (containers, images, and volumes).
+    ///
+    /// This method spawns async tasks to fetch fresh data from Docker
+    /// for all resource types.
     pub fn refresh_all(&self) {
         self.refresh_containers();
         self.refresh_images();

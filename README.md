@@ -77,17 +77,17 @@ dx run
 ### Build for Development
 
 ```bash
-# Run with hot reload (if using dx)
+# Run with hot reload
 dx serve --platform desktop
 
-# Or standard cargo
-cargo run
+# Or run directly
+dx run
 ```
 
 ### Build for Release
 
 ```bash
-cargo build --release
+dx build --release
 ```
 
 ### Run Tests
@@ -100,23 +100,47 @@ cargo test
 
 ```bash
 # Format code
-cargo fmt
+dx fmt
 
-# Run linter
-cargo clippy
+# Run linter and checks
+dx check
 ```
 
-<!--## 📄 License
+## 📚 Documentation
 
-[Your License Here]-->
+Comprehensive documentation is available in the [`docs/`](docs/) directory:
+
+- **[User Guide](docs/USER_GUIDE.md)** - Complete guide for using Doctainr
+- **[Development Guide](docs/DEVELOPMENT.md)** - Setup and development workflow
+- **[API Documentation](docs/API.md)** - Technical API reference
+- **[Architecture](ARCHITECTURE.md)** - System design and architecture
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Building and distributing
+- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 
-Contributions are welcome\! Please feel free to submit a Pull Request.
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
+
+- Development setup
+- Code standards
+- Pull request process
+- Issue guidelines
 
 ## 📧 Support
 
-For issues and questions, please open an issue on GitHub.
+For issues and questions:
+
+- **Bug Reports**: [Open an issue](https://github.com/MH0386/doctainr/issues)
+- **Feature Requests**: [Open an issue](https://github.com/MH0386/doctainr/issues)
+- **Questions**: Check the [User Guide](docs/USER_GUIDE.md) or [Troubleshooting](docs/TROUBLESHOOTING.md) guide
+
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
 
 ---
 
